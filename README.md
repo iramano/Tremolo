@@ -1,92 +1,50 @@
-# Tremolo
+# tremolo2 chefe
 
 A VST3 tremolo plugin built with JUCE, inspired by the behavior and circuit topology of an early BOSS TR-2 revision using the M5207L01 VCA.
 
-> This is an independent educational/research project and is not affiliated with, endorsed by, or sponsored by BOSS or Roland.
+> Independent educational/research project. Not affiliated with, endorsed by, sponsored by, or associated with BOSS or Roland.
 
 ## About
 
-The goal of this project is to build a tremolo effect that approximates the documented behavior of an early TR-2 circuit as closely as possible, while avoiding arbitrary "analog" coloration that is not supported by the available schematic, service documentation, datasheets, or measurements.
+`tremolo2 chefe` is a behavioral-modeling tremolo plugin.
 
-The current model includes:
+The goal is to approximate documented TR-2 behavior using schematics, service documentation, component datasheets, waveform references, and measurements — without adding arbitrary "analog warmth" or vintage coloration that is not technically justified.
 
-- Rate control based on the documented TR-2 LFO range
-- Wave control transitioning from triangle to square
-- Asymmetric LFO duty cycle approximation
-- Depth control
-- M5207L01 VCA-inspired gain control
-- Control-signal smoothing based on the circuit
-- Audio coupling high-pass behavior derived from the schematic
-- Parameter smoothing
-- DAW parameter state saving/restoration
-- Stereo-compatible processing using the same modulation on both channels
+## Current Features
 
-## Current status
+- Rate, Wave and Depth controls
+- Approx. 1.11–11.11 Hz LFO range
+- Triangle-to-square waveform behavior
+- Asymmetric duty-cycle approximation
+- M5207L01-inspired VCA model
+- Control-path filtering
+- Modeled audio coupling response
+- Parameter smoothing and DAW automation
+- Project state saving/restoration
+- VST3 support
 
-The core DSP is functional and has been tested in FL Studio.
+Currently developed and tested on Windows using FL Studio.
 
-Some behaviors have been compared against the original TR-2 service notes, including:
+## Validation
 
-- LFO minimum and maximum rate
-- Triangle and square waveform behavior
-- Depth response
-- Output waveform behavior using a 200 Hz square-wave test
-- Low-frequency response of the audio path
+The DSP has been tested using generated signals and compared with documented TR-2 behavior.
 
-The intermediate behavior of the WAVE control is still an approximation and may be refined in future versions.
-
-## Controls
-
-### Rate
-
-Controls the tremolo speed.
-
-The current model uses an approximate range of:
-
-- ~1.11 Hz minimum
-- ~11.11 Hz maximum
-
-### Wave
-
-Morphs the LFO from a smooth triangular waveform toward a more square/choppy waveform.
-
-### Depth
-
-Controls the amount of amplitude modulation.
-
-At minimum depth, the tremolo modulation is effectively disabled.
-
-## Technical approach
-
-The project uses behavioral circuit modeling rather than a full component-by-component electrical simulation.
-
-The implementation is based on:
-
-- TR-2 schematic analysis
-- TR-2 service documentation
-- M5207L01 VCA documentation
-- measured/tested behavior inside the DAW
-
-The project intentionally avoids adding saturation, noise, drift, compression, or other "vintage" effects unless there is technical evidence that they are relevant to the original circuit.
-
-## Built with
-
-- C++
-- JUCE
-- Visual Studio
-- VST3
-
-## Development environment
-
-Currently developed and tested on Windows with FL Studio.
-
-## Repository structure
+Measured examples:
 
 ```text
-Source/
-    PluginProcessor.cpp
-    PluginProcessor.h
-    PluginEditor.cpp
-    PluginEditor.h
+1 kHz   → effectively unity gain
+100 Hz  → approx. -1.4 dB
+50 Hz   → approx. -3.5 dB
+The intermediate behavior of the WAVE control remains an approximation and may be refined.
 
-Tremolo.jucer
+Built With
+- C++
+- JUCE
+- VST3
+- Visual Studio
+
+Disclaimer
+BOSS, TR-2, Roland, and related trademarks belong to their respective owners.
+tremolo2 chefe is an independent implementation created for educational, research, and audio-DSP development purposes.
+This repository does not contain original BOSS/Roland source code, firmware, artwork, logos, or proprietary DSP code.
+No claim is made that this software is an exact reproduction of any particular physical TR-2 unit.
