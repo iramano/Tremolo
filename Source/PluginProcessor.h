@@ -69,6 +69,9 @@ private:
     juce::SmoothedValue<float> waveSmoother;
     juce::SmoothedValue<float> depthSmoother;
 
+    juce::dsp::IIR::Filter<float> audioHighPassLeft;
+    juce::dsp::IIR::Filter<float> audioHighPassRight;
+
     float tr2VcaGain(float controlDeltaVolts) const;
     float tr2Lfo(float phaseNormalized, float waveKnob) const;
 

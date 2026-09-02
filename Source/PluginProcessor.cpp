@@ -143,6 +143,21 @@ void TremoloAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
     depthSmoother.setCurrentAndTargetValue(
         parameters.getRawParameterValue("depth")->load() / 100.0f
     );
+
+    auto audioHighPassCoefficients =
+        juce::dsp::IIR::Coefficients<float>::makeHighPass(
+            sampleRate,
+            59.0f
+        );
+
+    audioHighPassLeft.coefficients =
+        audioHighPassCoefficients;
+
+    audioHighPassRight.coefficients =
+        audioHighPassCoefficients;
+
+    audioHighPassLeft.reset();
+    audioHighPassRight.reset();
 }
 
 void TremoloAudioProcessor::releaseResources()
@@ -316,7 +331,17 @@ void TremoloAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             auto* channelData =
                 buffer.getWritePointer(channel);
 
-            channelData[sample] *= vcaGain;
+            float processedSample =
+                channelData[sample] * vcaGain;
+
+            if (channel == 0)
+                processedSample =
+                audioHighPassLeft.processSample(processedSample);
+            else if (channel == 1)
+                processedSample =
+                audioHighPassRight.processSample(processedSample);
+
+            channelData[sample] = processedSample;
         }
 
         //==============================================================
