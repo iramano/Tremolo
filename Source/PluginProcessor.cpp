@@ -226,13 +226,33 @@ float TremoloAudioProcessor::tr2Lfo(float phaseNormalized,
     const float wave =
         std::pow(knob, waveTaperExponent);
 
+    // Mantém a fase dentro de 0..1.
+    const float phase =
+        phaseNormalized - std::floor(phaseNormalized);
+
+    // Extremidade triangular.
     const float triangle =
-        1.0f - 4.0f * std::abs(phaseNormalized - 0.5f);
+        1.0f - 4.0f * std::abs(phase - 0.5f);
+
+    // Aproximação inicial do duty cycle assimétrico do TR-2.
+    // A documentação confirma duty ratio específico,
+    // mas não publica o percentual exato.
+    constexpr float tr2Duty = 0.67f;
+
+    const float highStart =
+        (1.0f - tr2Duty) * 0.5f;
+
+    const float highEnd =
+        highStart + tr2Duty;
 
     const float square =
-        triangle >= 0.0f ? 1.0f : -1.0f;
+        (phase >= highStart && phase < highEnd)
+        ? 1.0f
+        : -1.0f;
 
-    return juce::jmap(wave, triangle, square);
+    // WAVE: triangle -> square.
+    return triangle * (1.0f - wave)
+        + square * wave;
 }
 
 void TremoloAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
