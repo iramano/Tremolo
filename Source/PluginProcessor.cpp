@@ -203,8 +203,13 @@ float TremoloAudioProcessor::tr2VcaGain(float controlDeltaVolts) const
 float TremoloAudioProcessor::tr2Lfo(float phaseNormalized,
     float waveKnob) const
 {
+    const float knob =
+        juce::jlimit(0.0f, 1.0f, waveKnob);
+
+    constexpr float waveTaperExponent = 2.0f;
+
     const float wave =
-        std::pow(juce::jlimit(0.0f, 1.0f, waveKnob), 2.0f);
+        std::pow(knob, waveTaperExponent);
 
     const float triangle =
         1.0f - 4.0f * std::abs(phaseNormalized - 0.5f);
@@ -212,8 +217,7 @@ float TremoloAudioProcessor::tr2Lfo(float phaseNormalized,
     const float square =
         triangle >= 0.0f ? 1.0f : -1.0f;
 
-    return triangle * (1.0f - wave)
-        + square * wave;
+    return juce::jmap(wave, triangle, square);
 }
 
 void TremoloAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
@@ -339,17 +343,29 @@ juce::AudioProcessorEditor* TremoloAudioProcessor::createEditor()
 }
 
 //==============================================================================
-void TremoloAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void TremoloAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    auto state = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+
+    copyXmlToBinary(*xml, destData);
 }
 
-void TremoloAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void TremoloAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<juce::XmlElement> xmlState(
+        getXmlFromBinary(data, sizeInBytes)
+    );
+
+    if (xmlState != nullptr)
+    {
+        if (xmlState->hasTagName(parameters.state.getType()))
+        {
+            parameters.replaceState(
+                juce::ValueTree::fromXml(*xmlState)
+            );
+        }
+    }
 }
 
 //==============================================================================
