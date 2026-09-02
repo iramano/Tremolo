@@ -12,6 +12,10 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="qNpdmK" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <FILE id="uusRLW" name="Fraunces_72pt-LightItalic.ttf" compile="0"
+          resource="1" file="Source/Fraunces_72pt-LightItalic.ttf"/>
+    <FILE id="J4P1B2" name="Fraunces_72pt_SuperSoft-SemiBold.ttf" compile="0"
+          resource="1" file="Source/Fraunces_72pt_SuperSoft-SemiBold.ttf"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_analytics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
